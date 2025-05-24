@@ -1,110 +1,134 @@
-# 🚌 母校のスクールバス予約システム（利用者用アプリ・リファクタリング版）
+# 🚌 母校のスクールバス予約システム（運転手用アプリ・リファクタリング版）
 
-- RefacSchoolBusReservationForUser-kotlin  
+- RefacSchoolBusReservationForDriver-kotlin  
+- 2024 大邱カトリック大学 キャップストーンデザイン 🥉奨励賞受賞作品（スクールバス予約システム）の Kotlin リファクタリング版です。
 
-- 2024年 大邱カトリック大学 キャップストーンデザイン 🥉奨励賞受賞作品（スクールバス予約システム）の Kotlin リファクタリング版です。  
-- 従来の Java バージョンの構造を改善し、ユーザー体験（UX）とインターフェース（UI）を向上させました。  
-- ****デモ動画を見る**** [📽️](https://youtube.com/shorts/W_HfrclE_xM?feature=share)  
-- **📄 [🇰🇷 한국어版READMEはこちら](./README.md)**  
+- スクールバス運行のための **運転手専用アプリ**です。  
+- Firebase を活用し、**リアルタイム予約者数の確認**、**運行記録の確認**、  
+- **簡単な時間／路線の管理**ができるように設計されています。  
+- **デモ動画を見る** [📽️](https://youtube.com/shorts/iBq0nHXdfOc?feature=share)
 
 ---
 
-## 主な機能
+## 主な機能（画面別に紹介）
 
-### 1. ログイン [Login.kt](app/src/main/java/com/example/refac_userbus/Login.kt) / 会員登録画面 [Register.kt](app/src/main/java/com/example/refac_userbus/Register.kt)
-- [ログイン／登録ページ](https://github.com/wonna-0830/login)
+### 1. ログイン [Login.kt](app/src/main/java/com/example/refac_driverapp/Login.kt) / 会員登録画面 [Register.kt](app/src/main/java/com/example/refac_driverapp/Register.kt)
+- [ログイン／会員登録](https://github.com/wonna-0830/login)
 <a href="https://github.com/wonna-0830/login">
-  <img src="images/light_login.jpg" width="180">
-  <img src="images/dark_login.jpg" width="180">
-  <img src="images/light_register.jpg" width="180">
-  <img src="images/dart_register.jpg" width="180">
+  <img src="images/login.jpg" width="180">
+  <img src="images/register.jpg" width="180">
 </a>
 
-- Firebase Authentication によるメール／パスワードログイン  
-- 自動ログイン機能（CheckBox 利用） => sharedPreference に保存  
-- 登録完了後、Firebase にユーザー情報を保存  
-- メール形式でない、または入力欄が未入力の場合はログイン無効  
-- メール形式でない、または入力欄未入力／パスワード8文字未満／名前が未入力の場合は登録無効  
+- [ログイン XML](app/src/main/res/layout/activity_login.xml)  
+- [会員登録 XML](app/src/main/res/layout/activity_register.xml)  
+- Firebase Authentication を用いたメールアドレスとパスワードによるログイン  
+- 自動ログイン機能（チェックボックス）  
+- 運転手専用アカウントとユーザーアカウントを区別してログイン処理  
+- フォーマット不正や未入力の場合はログインボタン無効化  
+- パスワードが8文字未満、または未入力の際は登録無効化
 
-### 2. 路線選択画面 [RouteChoose.kt](app/src/main/java/com/example/refac_userbus/RouteChoose.kt)
-- [レイアウトページ](https://github.com/wonna-0830/routechoose)
-<a href="https://github.com/wonna-0830/login">
-  <img src="images/light_routechoose.jpg" width="200">
-  <img src="images/dark_routechoose.jpg" width="200">
+---
+
+### 2. 路線および時間選択画面 [RouteTime.kt](app/src/main/java/com/example/refac_driverapp/RouteTime.kt)
+- [レイアウト](https://github.com/wonna-0830/routetime)
+<a href="https://github.com/wonna-0830/routetime">
+  <img src="images/routetime.jpg" width="180">
 </a>
 
-- 4つの登校バス路線＋1つの下校バスボタンを提供  
-- ボタンをクリックすると、選択された路線に応じて TimePlace ページの構成要素が変化（TextView／Spinner／地図など）  
-- ユーザー名は TextView にて表示  
+- [XML](app/src/main/res/layout/activity_route_time.xml)  
+- Spinner にて運転可能な路線選択  
+- 選択された路線に応じて時間リストが自動更新  
+- 両方の選択が完了した時のみ確認ボタンが有効に  
+- 確認ボタンを押すと Clock ページに遷移＋選択情報がDBに保存  
+- 現在時刻以降の時間のみ Spinner に反映
 
-### 3. 時間および停留所選択画面 [TimePlace.kt](app/src/main/java/com/example/refac_userbus/TimePlace.kt)
-- レイアウト [ページリンク](https://github.com/wonna-0830/timeplace)
-<a href="https://github.com/wonna-0830/login">
-  <img src="images/light_timeplace.jpg" width="200">
-  <img src="images/dark_timeplace.jpg" width="200">
+---
+
+### 3. 運行画面 [Clock.kt](app/src/main/java/com/example/refac_driverapp/Clock.kt)
+- [レイアウト](https://github.com/wonna-0830/clock)
+<a href="https://github.com/wonna-0830/clock">
+  <img src="images/clock.jpg" width="180">
 </a>
 
-- 選択された路線に応じて Spinner／画像ビュー／テキストビューが動的に更新  
-- 現在時刻以降の予約可能時間のみ表示  
-- 時間または停留所のいずれかが未選択の場合、予約ボタンは無効  
-- ローディング中は ProgressBar 表示  
-- 予約完了後、Firebase Firestore に保存  
-- 登校／下校それぞれ1日1回の予約制限  
+- [XML](app/src/main/res/layout/activity_clock.xml)  
+- 選択した路線と時間に基づき予約された停留所のリストを表示  
+- 各停留所ごとの予約人数をリアルタイムで表示（RecyclerView 使用）  
+- 予約人数に応じてバッジの色が変化（例：0人=グレー、多い=強調色）  
+- 高齢の運転手を考慮し、大きくて太字のテキストを採用  
+- ローディング中は ProgressBar を表示  
+- 画面上部にデジタル時計を表示  
+- 運転中の誤操作防止機能あり  
+  - Android デバイスの戻るボタン無効化（Toast で案内）  
+  - 運行終了ボタンを2回押さなければページ遷移不可  
+- 運転中は画面スリープを防止するロジックを適用
 
-### 4. 予約確認画面 [SelectBusList.kt](app/src/main/java/com/example/refac_userbus/SelectBusList.kt)
-- レイアウト [ページリンク](https://github.com/wonna-0830/selectbuslist)
-<a href="https://github.com/wonna-0830/login">
-  <img src="images/light_selectbuslist.jpg" width="200">
-  <img src="images/dark_selectbuslist.jpg" width="200">
+---
+
+### 4. 運行終了画面 [Finish.kt](app/src/main/java/com/example/refac_driverapp/Finish.kt)
+- [レイアウト](https://github.com/wonna-0830/finish)
+<a href="https://github.com/wonna-0830/finish">
+  <img src="images/finish.jpg" width="180">
 </a>
 
-- Firebase からユーザーの予約データをリスト形式で表示  
-- 予約がない場合は案内メッセージを表示  
-- 各予約項目には削除ボタンあり（バス出発後は無効化）  
-- 削除時は Firebase 上でもリアルタイムに削除反映  
-- 予約完了時、バス出発10分前にアラーム通知機能も追加済 [(確認画像)](images/user_alert.jpg)
+- [XML](app/src/main/res/layout/activity_finish.xml)  
+- 該当運転手が運行した路線・時間・終了時刻を表示  
+- RouteTime.kt にて保存された情報に `endTime` を追加で保存  
+- 次の路線選択、運行履歴の確認、ログアウト、アプリ終了 の4ボタン  
+- 各ボタンにはアラートメッセージを適用して誤操作を防止
 
-### 5. 共通機能（FAB／設定など）
-- [FAB（Floating Action Button）](images/light_fab.jpg) を使用して以下機能にアクセス可能：
-  - 大学ホームページのスクールバス案内へリンク  
-  - 予約確認画面へショートカット  
-  - ログアウト機能  
-  - ダークモード切り替え（端末のテーマに連動）  
-- 端末の戻るボタンを2回押すとアプリ終了  
+---
+
+### 5. 運行履歴画面 [SelectBusList.kt](app/src/main/java/com/example/refac_driverapp/SelectBusList.kt)
+- [レイアウト](https://github.com/wonna-0830/selectbuslist)
+<a href="https://github.com/wonna-0830/selectbuslist">
+  <img src="images/selectbuslist.jpg" width="180">
+</a>
+
+- [XML](app/src/main/res/layout/activity_selectbuslist.xml)  
+- 過去の運行履歴を運転手ごとに確認（降順表示）  
+- RecyclerView で記録一覧を表示  
+- 戻るボタンを押すと Finish 画面に戻る  
+- 各予約項目に削除ボタンあり  
+  - 路線や時間を誤って選択した場合に限り削除可能  
+    - 「選択ミスした路線のみ削除できます。削除されたデータに関する責任は負いかねます。本当に削除しますか？」と確認ダイアログ表示  
+- 同一の運行記録がある場合は、**上書き保存により重複を防止**
+
+---
+
+### 6. 共通機能
+- Firebase によるリアルタイムデータ連携  
+- 戻るボタンを2回押すとアプリ終了
 
 ---
 
 ## 技術スタック
 
-| 区分 | 使用技術 |
-|------|----------|
+| カテゴリ | 技術 |
+|----------|------|
 | 言語 | Kotlin |
-| IDE  | Android Studio |
-| DB   | Firebase Firestore |
+| IDE | Android Studio |
+| データベース | Firebase Firestore |
 | 認証 | Firebase Authentication |
-| アーキテクチャ | MVVM（部分導入） |
-| その他 | RecyclerView、Spinner、ViewBindingなど |
+| アーキテクチャ | MVVM 一部適用（今後フル導入予定） |
+| その他 | RecyclerView、Spinner、Intent、LiveDataなど |
 
 ---
 
 ## 🔄 リファクタリングのポイント
 
-- **Java → Kotlin への完全移行** により、可読性と保守性を向上  
-- **XML 構造の改善**
-  - 路線ごとに分かれていた XML を、**共通レイアウト構造に統合**  
+- **Java → Kotlinへの完全移行** によってコードの可読性と保守性を向上  
 - **UX改善**
-  - **1日1回の予約制限**で重複を防止  
-  - Spinner では現在時刻以降のみ表示するよう **動的フィルタリング**  
-  - よく使う機能（予約確認、ログアウトなど）は **FABボタン** で即アクセス可能  
-- **UI改善**
-  - ダークモードに自動対応（端末テーマに連動）  
-  - ローディング状態の可視化（ProgressBar）  
-- **構造的改善および拡張性確保**
-  - Firebase Authentication によるユーザー別データ管理  
-  - Firestore に構造化された予約データ保存 ⇒ 検索・並び替えなど拡張が容易
+  - 運転手の年齢層を考慮し、**大きくて太字のテキスト**を使用  
+  - **ライトモード固定**：夜間運転の視認性を考慮し、ダークモード非対応  
+  - 一目で把握できる**シンプルで直感的なUI設計**
+- **UI強化**
+  - 停留所ごとの予約人数に応じて**バッジの色が変化**  
+  - **運行履歴ページを追加**し、過去の記録が確認可能に
+- **役割分担の明確化**
+  - **運転手／ユーザーアカウントの分離**によりセキュリティと機能明確化  
+  - **路線・時間選択 → 状況確認** までをシンプルなフローで実現
 
 ---
 
-> ✨ このアプリは「生徒の快適な通学サポート」を目指して設計された、  
-> 実用性・直感性・安全性を重視したスクールバス予約アプリです。
-
+> ✨ このアプリはユーザーアプリとリアルタイムで連携し、  
+> 効率的なスクールバス運行をサポートするツールとして設計されています。
